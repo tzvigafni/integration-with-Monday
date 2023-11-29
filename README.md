@@ -5,4 +5,4 @@
 nodemon server.js
 
 /frontend/
-npm run build / npm start
+npm run build 
