@@ -5,7 +5,6 @@ const connection = require("../../config/connection");
 
 // get all boards
 router.post('/', async (req, res) => {
-
     const Query = `
     SELECT * FROM integrations 
     WHERE platform = 'monday' 
@@ -18,29 +17,31 @@ router.post('/', async (req, res) => {
             console.log(err);
             res.status(500).send("Not registered!");
         } else {
-            console.log(results);
             if (results.length > 0) {
                 let atoken = results[0].platform_token;
 
-                var myHeaders = new Headers();
+                let myHeaders = new Headers();
+
                 myHeaders.append("Authorization", `Bearer ${atoken}`);
                 myHeaders.append("Content-Type", "application/json");
 
-                var raw = JSON.stringify({
-                    "query": "query { boards { name id }} "
+                let raw = JSON.stringify({
+                    "query": "query { boards { name id }}"
                 });
 
-                var requestOptions = {
+                let requestOptions = {
                     method: 'POST',
                     headers: myHeaders,
                     body: raw,
-                    redirect: 'follow'
+                    redirect: 'follow',
                 };
-
                 fetch("https://api.monday.com/v2", requestOptions)
                     .then(response => response.json())
-                    .then(result => res.send(result.data.boards))
-                    .catch(error => console.log('error', error));
+                    .then(result => { res.send(result.data.boards) })
+                    .catch(error => {
+                        console.log('error --', error)
+                        res.send(error)
+                    });
             }
         }
     })

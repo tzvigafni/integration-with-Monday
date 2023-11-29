@@ -27,8 +27,9 @@ app.use(bodyParser.json()); // קביעת ה-body parser עבור JSON
 
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
-const redirectUri = `${process.env.URL}/oauth/callback`; // כתובת ה-redirect URI
+const redirectUri = `${process.env.URL}/oauth/callback`; 
 
+//start
 app.post('/requestInstallationURL', (req, res) => {
     const { user_id, user_type, plugin_id } = req.body || {};
     const installationToken = uuidv4();
@@ -44,7 +45,6 @@ app.post('/requestInstallationURL', (req, res) => {
     const platformSettings = JSON.stringify(settings);
 
     const phoneDoToken = req.headers.authorization.split(' ')?.[1]
-    // const [, phoneDoToken] = token.match(/Bearer\s+(\S+)/) || [];
 
     if (!phoneDoToken) {
         console.log('Token format is incorrect');
@@ -64,6 +64,7 @@ app.post('/requestInstallationURL', (req, res) => {
                 res.status(500).send("Server error");
             } else {
                 console.log("Data sent and saved successfully!");
+                console.log("installationToken", installationToken);
                 res.status(200).json({
                     url: `${process.env.URL}/login?installationToken=${installationToken}`,
                 });
@@ -78,6 +79,8 @@ app.get('/login', (req, res) => {
     const authUrl = `https://auth.monday.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&state=${installationToken}`;
     res.redirect(authUrl);
 });
+
+app.use(express.static('build'));
 
 // נתיב להתחברות ל-Monday.com והפניה חזרה אחרי האוטוריזציה
 app.get('/oauth/callback', async (req, res) => {
@@ -121,7 +124,8 @@ app.get('/oauth/callback', async (req, res) => {
                     res.status(500).send("Server error");
                 } else {
                     console.log("Data updated successfully!");
-                    res.status(200).send("updated")
+                    // res.status(200).send("updated")
+                    res.status(200).sendFile(path.join(__dirname, 'build', 'index.html'));
                 }
             }
         );
@@ -428,11 +432,6 @@ app.post('/monday/Webhook', (req, res) => {
 
 // Routes
 app.use('/api/boards', boardsRoutes);
-
-app.use("/", express.static("build"));
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
-});
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);

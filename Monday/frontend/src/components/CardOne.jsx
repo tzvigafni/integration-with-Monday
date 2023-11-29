@@ -11,22 +11,7 @@ import Box from '@mui/material/Box';
 
 import Button from '@mui/material/Button';
 
-
-// import {useNavigate} from 'react-router-dom';
-import { Items } from './Items';
-
-
 function CardOne({ board, numBoard, setNumBoard }) {
-
-    // const navigate = useNavigate();
-
-    const handleBoardId = (board_id) => {
-
-        <Items />
-
-        // navigate("/Item");
-
-    };
 
     const [selectedBoard, setSelectedBoard] = useState(null);
     const [boardData, setBoardData] = useState(null);
@@ -38,7 +23,7 @@ function CardOne({ board, numBoard, setNumBoard }) {
         } else {
             setSelectedBoard(board);
             try {
-                const response = await fetch(`https://c6a6-147-235-79-190.ngrok-free.app/api/boards/${board.id}`, {
+                const response = await fetch(`https://monday-integration.serveo.net/api/boards/${board.id}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -53,10 +38,9 @@ function CardOne({ board, numBoard, setNumBoard }) {
         }
     };
 
-
     const handleSendingConversationSummaries = async (board) => {
         try {
-            const response = await fetch(`https://c6a6-147-235-79-190.ngrok-free.app/api/boards/saveNumBoard/${board}`, {
+            const response = await fetch(`https://monday-integration.serveo.net/api/boards/saveNumBoard/${board}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,14 +58,12 @@ function CardOne({ board, numBoard, setNumBoard }) {
         }
     }
 
-
     return (
         <Grid item xs={6} sm={4} md={3} >
             <Card sx={{ maxWidth: 200 }} style={{ margin: "20px" }}>
                 <CardHeader
                     subheader={board && "name: " + board.name}
                 />
-
                 <CardContent>
                     <Button variant="contained"
                         onClick={() => handleBoardClick(board)}>
